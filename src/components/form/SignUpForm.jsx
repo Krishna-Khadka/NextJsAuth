@@ -5,33 +5,43 @@ import Link from "next/link";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useFormik } from "formik";
-import { signUpSchema } from "@/schema";
+import { useRouter } from "next/navigation";
+// import { signUpSchema } from "@/schema";
 
 const initialValues = {
   name: "",
   email: "",
-  address: "",
+  phone: "",
   password: "",
-  confirm_password: "",
+  password_confirmation: "",
 };
-console.log(initialValues);
+// console.log(initialValues);
 
 const SignUpForm = () => {
+  const router = useRouter();
   const { handleSubmit, handleBlur, handleChange, errors, values, touched } =
     useFormik({
       initialValues,
-      validationSchema: signUpSchema,
-      onSubmit: async(values, action) => {
+      // validationSchema: signUpSchema,
+      onSubmit: async (values, action) => {
+        alert("Hello World !!");
         try {
-          const response = await axios.post('http://127.0.0.1:8000/api/user/register', values);
-          if(response.status == 200){
-            console.log('user registered successfully !!');
-          }
-          else{
-            console.error('Registration failed:', response.data);
+          const response = await axios.post(
+            "http://192.168.100.190:8000/api/register",
+            values
+          );
+          console.log(values);
+          if (response.status == 201) {
+            console.log("user registered successfully !!");
+            console.log(response.data);
+
+            localStorage.setItem("user", JSON.stringify(response.data));
+            router.push("/sign-in");
+          } else {
+            console.error("Registration failed:", response.data);
           }
         } catch (error) {
-          console.error('Error during registration: ', error);
+          console.error("Error during registration: ", error);
         }
       },
     });
@@ -77,6 +87,18 @@ const SignUpForm = () => {
           <div className="mb-6">
             <input
               className="shadow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight h-12 focus:outline-none focus:shadow-outline"
+              name="phone"
+              type="text"
+              placeholder="Phone"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.phone}
+              required
+            />
+          </div>
+          {/* <div className="mb-6">
+            <input
+              className="shadow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight h-12 focus:outline-none focus:shadow-outline"
               name="address"
               type="text"
               placeholder="Address"
@@ -88,7 +110,7 @@ const SignUpForm = () => {
             {errors.address && touched.address ? (
               <p className="text-red-600">{errors.address}</p>
             ) : null}
-          </div>
+          </div> */}
           <div className="mb-6">
             <input
               className="shadow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight h-12 focus:outline-none focus:shadow-outline"
@@ -107,12 +129,12 @@ const SignUpForm = () => {
           <div className="mb-6">
             <input
               className="shadow appearance-none border border-gray-400 rounded w-full py-2 px-3 text-gray-700 leading-tight h-12 focus:outline-none focus:shadow-outline"
-              name="confirm_password"
+              name="password_confirmation"
               type="password"
               placeholder="Confirm Passsword"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.confirm_password}
+              value={values.password_confirmation}
               required
             />
             {errors.confirm_password && touched.confirm_password ? (

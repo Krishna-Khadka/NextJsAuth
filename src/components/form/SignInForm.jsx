@@ -25,7 +25,7 @@ const SignInForm = () => {
         try {
           console.log(values);
           const response = await axios.post(
-            "http://127.0.0.1:8000/api/user/login",
+            "http://192.168.100.190:8000/api/login",
             values
           );
 
@@ -34,7 +34,10 @@ const SignInForm = () => {
             console.log("token", response.data.token);
 
             console.log("Login successful!");
-            localStorage.setItem("tokens", response.data.token);
+            console.log(response.data);
+
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
             router.push("/profile");
           } else {
             console.error("Login failed:", response.data);
